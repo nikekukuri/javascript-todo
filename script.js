@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const clearForm = () => {
   todo.value = '';
-  priority.value = '普';
+  priority.value = '中';
   deadline.value = '';
 }
 
@@ -55,7 +55,15 @@ const checkBoxListener = (ev) => {
   storage.todoList = JSON.stringify(todoItems);
 };
 
-function validate() {
+const clearTable = () => {
+  const trList = Array.from(document.getElementsByTagName('tr'))
+  trList.shift();
+  for (const tr of trList) {
+    tr.remove();
+  }
+}
+
+const validate = () => {
   let item = {};
   if (todo.value != '') {
     item.todo = todo.value;
@@ -74,7 +82,7 @@ function validate() {
   if (priority.value != '') {
     item.priority = priority.value;
   } else {
-    item.priority = '普';
+    item.priority = '中';
   }
   item.done = false;
 
@@ -89,28 +97,66 @@ submit.addEventListener('click', () => {
   storage.todoList = JSON.stringify(todoItems);
 });
 
-const filterButton = document.createElement('button');
-filterButton.textContent = '優先度（高）で絞り込み';
-filterButton.id = 'priority'
+// Filter
+//const filterDropDown = document.getElementById('filter');
+
+
 const main = document.querySelector('main');
+
+const filterDropDown = document.createElement('select');
+filterDropDown.id = 'filterDropDown';
+const filterDropDownList = [
+  { value: 'High', text: '高' },
+  { value: 'Middle', text: '中' },
+  { value: 'Low', text: '低' },
+]
+
+filterDropDownList.forEach((option) => {
+  const opt = document.createElement('option');
+  opt.value = option.value;
+  opt.textContent = option.text;
+  filterDropDown.appendChild(opt);
+});
+main.appendChild(filterDropDown);
+
+
+const filterButton = document.createElement('button');
+filterButton.textContent = 'フィルタ';
+filterButton.id = 'priority';
 main.appendChild(filterButton);
 
-const clearTable = () => {
-  const trList = Array.from(document.getElementsByTagName('tr'))
-  trList.shift();
-  for (const tr of trList) {
-    tr.remove();
+const showItemsByPriority = (priority) => {
+  for (const item of todoItems) {
+    console.log(item.priority);
+    if (item.priority == priority) {
+      addItem(item);
+    }
   }
 }
 
 filterButton.addEventListener('click', () => {
+  const filterTarget = document.getElementById('filterDropDown').value;
+  console.log(filterTarget);
+  if (filterTarget == '') {
+    return;
+  }
+
+  const filterList = [
+    { target: 'High', priority: '高' },
+    { target: 'Middle', priority: '中' },
+    { target: 'Low', priority: '低' },
+  ];
+
+  filterList.forEach((filter) => {
+    console.log(filter)
+    if (filter.target == filterTarget) {
+      console.log(filter)
+      showItemsByPriority(filter.priority);
+    }
+  });
+
   clearTable();
 
-  for (const item of todoItems) {
-    if (item.priority == '高') {
-      addItem(item);
-    }
-  }
 });
 
 const remove = document.createElement('button');
