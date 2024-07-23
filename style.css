@@ -13,6 +13,7 @@ button#submit, button#priority, button#remove {
   background-color: royalblue;
   color: white;
   border-style: none;
+	cursor: pointer;
 }
 button#priority { background-color: olivedrab; }
 button#remove { background-color: firebrick; }
